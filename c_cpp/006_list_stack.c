@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-20 15:25:46
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-07-26 15:01:05
+* @Last Modified time: 2019-07-26 15:09:35
 */
 
 #include <stdio.h>
@@ -139,7 +139,6 @@ int main(int argc, char const *argv[])
         pop_list_stack();
     }
     printf_stack();
-
 
     return 0;
 }

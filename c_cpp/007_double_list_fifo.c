@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-29 19:22:56
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-07-29 19:33:54
+* @Last Modified time: 2019-07-29 20:09:48
 */
 
 /**
@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <malloc.h>
 
-// #include <006_double_list_fifo.h>
 
 // 双链表接口封装
 typedef struct d_node

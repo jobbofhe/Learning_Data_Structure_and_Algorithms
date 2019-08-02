@@ -1,6 +1,11 @@
 #ifndef _LIST_HEAD_H
 #define _LIST_HEAD_H
 
+/**
+ * linux内核中有关双向链表的实现
+ */
+
+
 // 双向链表节点
 struct list_head {
     struct list_head *next, *prev;

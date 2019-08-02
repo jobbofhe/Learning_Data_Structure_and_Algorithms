@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-26 17:23:47
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-07-28 20:07:37
+* @Last Modified time: 2019-07-29 19:18:24
 */
 
 #include <stdio.h>
@@ -22,7 +22,6 @@ typedef struct d_node
 // 头结点，不存放元素
 // static node *phead = NULL;
 static int count = 0;
-
 
 node *create_node(void *pvalue)
 {
@@ -278,7 +277,7 @@ int destroy_double_list(node *plist)
     node *pnode = plist->next;
     node *p = NULL;
 
-    while(NULL != pnode) 
+    while(plist != pnode) 
     {
         p = pnode->next;
         pnode = pnode->next;
@@ -368,5 +367,7 @@ int main(int argc, char const *argv[])
         print(info);
     }
     
+    destroy_double_list(pstack);
+
     return 0;
 }

@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-29 20:08:30
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-01 17:40:41
+* @Last Modified time: 2019-08-02 18:54:53
 */
 
 
@@ -225,6 +225,51 @@ Node *bstree_search_successor(Node *pnode)
 
     return tmp;
 }
+
+// 中根序向 树tree中插入一个结点，返回插入后的树的根节点
+Node *bstree_insert(BSTree tree, Node *newNode)
+{
+    if (newNode == NULL)
+    {
+        return tree;
+    }
+
+    Node *pTree = tree;
+    Node *pTmp = NULL;
+
+    // 找到要插入的位置
+    while(NULL != pTree) 
+    {
+        pTmp = pTree;
+        // 新节点小于根节点
+        if (newNode->key < pTree->key)
+        {
+            pTree = pTree->left;
+        }
+        else
+        {
+            pTree = pTree->right;
+        }
+    }
+    newNode->parent = pTmp;
+
+    // 如果没有找到要插入的位置，即tree为空
+    if(pTmp == NULL)
+    {
+        tree = newNode;
+    }
+    else if (newNode->key < pTmp->key)
+    {
+        pTmp->left = newNode;
+    }
+    else
+    {
+        pTmp->right = newNode;
+    }
+
+    return tree;
+}
+
 
 int main(int argc, char const *argv[])
 {

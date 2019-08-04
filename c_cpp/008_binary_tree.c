@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-29 20:08:30
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-02 18:54:53
+* @Last Modified time: 2019-08-04 19:26:14
 */
 
 
@@ -226,8 +226,9 @@ Node *bstree_search_successor(Node *pnode)
     return tmp;
 }
 
-// 中根序向 树tree中插入一个结点，返回插入后的树的根节点
-Node *bstree_insert(BSTree tree, Node *newNode)
+// 内部接口
+// 中根序 向树tree中插入一个结点，返回插入后的树的根节点
+static Node *bstree_insert(BSTree tree, Node *newNode)
 {
     if (newNode == NULL)
     {
@@ -246,9 +247,15 @@ Node *bstree_insert(BSTree tree, Node *newNode)
         {
             pTree = pTree->left;
         }
-        else
+        else if(newNode->key > pTree->key) // 新节点大于根节点
         {
             pTree = pTree->right;
+        }
+        else // 新节点等于根节点
+        {
+            free(newNode);
+
+            return tree;
         }
     }
     newNode->parent = pTmp;
@@ -270,6 +277,77 @@ Node *bstree_insert(BSTree tree, Node *newNode)
     return tree;
 }
 
+// 外部接口，在树中新建结点，并返回根节点
+Node *create_bstree(BSTree tree, TYPE key)
+{
+    Node *newNode;
+
+    // 创建新结点
+    newNode = create_bstree_node(key, NULL,  NULL, NULL);
+    if (NULL == newNode)
+    {
+        return tree;
+    }
+
+    return bstree_insert(tree, newNode);
+}
+
+// 删除节点
+static Node *bstree_delete_node(BSTree *tree, Node *dstNode)
+{
+    Node *x = NULL;
+    Node *y = NULL;
+
+    // 根据要删除的结点的类型，确定要删除的节点或者他的后继
+    if (dstNode->left == NULL || dstNode->right == NULL)
+    {
+        y = dstNode;
+    }
+    else // 左右孩子都不为空
+    {
+        // 查找要删除的节点的 后继
+        y = bstree_search_successor(dstNode);
+    }
+
+    if (y->left != NULL)
+    {
+        x = y->left;
+    }
+    else
+    {
+        x = y->right;
+    }
+
+    if (x != NULL)
+    {
+        x->parent = y->parent;
+    }
+
+    if (y->parent == NULL)
+    {
+        tree = x;
+    }
+    else if (y == y->parent->left)
+    {
+        y->parent->left = x;
+    }
+    else
+    {
+        y->parent->right = x;
+    }
+
+    if (y != dstNode)
+    {
+        dstNode->key = y->key;
+    }
+
+    if (y != NULL)
+    {
+        free(y);
+    }
+
+    return tree;
+}
 
 int main(int argc, char const *argv[])
 {

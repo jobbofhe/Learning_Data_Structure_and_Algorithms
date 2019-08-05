@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-29 20:08:30
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-04 19:26:14
+* @Last Modified time: 2019-08-05 20:36:16
 */
 
 
@@ -349,6 +349,51 @@ static Node *bstree_delete_node(BSTree *tree, Node *dstNode)
     return tree;
 }
 
+// 打印整颗二叉树(tree)。其中，tree是二叉树节点，key是二叉树的键值，而direction表示该节点的类型：
+
+// direction为 0，表示该节点是根节点;
+// direction为-1，表示该节点是它的父结点的左孩子;
+// direction为 1，表示该节点是它的父结点的右孩子。
+void printf_bstree(BSTree tree, TYPE key, int direction)
+{
+    if (NULL == tree)
+    {
+        return;
+    }
+
+    // 根节点
+    if (0 == direction) 
+    {
+        printf("%3d is root.\n", tree->key);
+    }
+    else
+    {
+        printf("%3d is %3d's %6s child.\n", tree->key, key, direction == 1?"right":"left");
+    }
+
+    printf_bstree(tree->left, tree->key, -1);
+    printf_bstree(tree->right, tree->key, 1);
+}
+
+void destroy_bstree(BSTree tree)
+{
+    if (tree == NULL)
+    {
+        return;
+    }
+
+    if (tree->left != NULL)
+    {
+        destroy_bstree(tree->left);
+    }
+    if (tree->right != NULL)
+    {
+        destroy_bstree(tree->right);
+    }
+
+    free(tree);
+}
+    
 int main(int argc, char const *argv[])
 {
     BSTree tree = create_bstree_node(3, NULL, NULL, NULL);

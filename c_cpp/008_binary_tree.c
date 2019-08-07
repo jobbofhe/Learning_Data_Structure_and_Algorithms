@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-07-29 20:08:30
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-05 20:36:16
+* @Last Modified time: 2019-08-07 20:11:18
 */
 
 
@@ -25,6 +25,59 @@ typedef struct BSTreeNode
     struct BSTreeNode *parent;
     
 }Node, *BSTree;
+
+
+Node *create_bstree_node(TYPE key, Node *parent, Node *left, Node *right);
+
+Node *insert_bstree(BSTree tree, TYPE key);
+
+// 前根序遍历
+void pre_order_bstree(BSTree tree);
+
+// 中根序遍历
+void middle_order_bstree(BSTree tree);
+
+// 后根序遍历
+void behind_order_bstree(BSTree tree);
+
+// 中根序
+// 递归方式
+// 在二叉树中，查找值为key的节点
+Node *bstree_search_recursion(BSTree tree, TYPE key);
+// 中根序
+// 循环方式
+// 在二叉树中，查找值为key的节点
+Node *bstree_search(BSTree tree, TYPE key);
+
+// 中根序，查找最大值
+Node *bstree_search_max(Node *pnode);
+
+// 中根序，朝赵最小值
+Node *bstree_search_min(Node *pnode);
+
+// 中根序，查找 某结点的前驱
+Node *bstree_search_predecessor(Node *pnode);
+// 中根序，查找 某结点的后继结点
+Node *bstree_search_successor(Node *pnode);
+
+// 内部接口
+// 中根序 向树tree中插入一个结点，返回插入后的树的根节点
+static Node *bstree_insert(BSTree tree, Node *newNode);
+
+// 外部接口，在树中新建结点，并返回根节点
+Node *create_bstree(BSTree tree, TYPE key);
+
+// 删除节点
+static Node *bstree_delete_node(BSTree tree, Node *dstNode);
+
+// 打印整颗二叉树(tree)。其中，tree是二叉树节点，key是二叉树的键值，而direction表示该节点的类型：
+
+// direction为 0，表示该节点是根节点;
+// direction为-1，表示该节点是它的父结点的左孩子;
+// direction为 1，表示该节点是它的父结点的右孩子。
+void printf_bstree(BSTree tree, TYPE key, int direction);
+
+void destroy_bstree(BSTree tree);
 
 
 Node *create_bstree_node(TYPE key, Node *parent, Node *left, Node *right)
@@ -117,6 +170,9 @@ Node *bstree_search_recursion(BSTree tree, TYPE key)
     }
 }
 
+// 中根序
+// 循环方式
+// 在二叉树中，查找值为key的节点
 Node *bstree_search(BSTree tree, TYPE key)
 {
     if (NULL == tree)
@@ -125,7 +181,7 @@ Node *bstree_search(BSTree tree, TYPE key)
     }
     while(NULL != tree && (tree->key != key))
     {
-        if (key < tree->left)
+        if (key < tree->key)
         {
             tree = tree->left;
         }
@@ -293,7 +349,7 @@ Node *create_bstree(BSTree tree, TYPE key)
 }
 
 // 删除节点
-static Node *bstree_delete_node(BSTree *tree, Node *dstNode)
+static Node *bstree_delete_node(BSTree tree, Node *dstNode)
 {
     Node *x = NULL;
     Node *y = NULL;
@@ -349,6 +405,17 @@ static Node *bstree_delete_node(BSTree *tree, Node *dstNode)
     return tree;
 }
 
+// 删除值为key的节点
+Node* bstree_delete_key(BSTree tree, TYPE key)
+{
+    Node *z, *node; 
+
+    if ((z = bstree_search(tree, key)) != NULL)
+        tree = bstree_delete_node(tree, z);
+
+    return tree;
+}
+
 // 打印整颗二叉树(tree)。其中，tree是二叉树节点，key是二叉树的键值，而direction表示该节点的类型：
 
 // direction为 0，表示该节点是根节点;
@@ -393,15 +460,56 @@ void destroy_bstree(BSTree tree)
 
     free(tree);
 }
-    
+
+
+static int arr[] = {3, 54, 6, 7, 43, 9, 59, 55, 0, 2};
 int main(int argc, char const *argv[])
 {
-    BSTree tree = create_bstree_node(3, NULL, NULL, NULL);
-    BSTree ptree = tree;
+    Node *root;
 
-    create_bstree_node(1, tree, NULL, tree->right);
+    int i = 0;
+    printf("--> 新建结点: ");
+    for (i=0; i < 10; ++i)
+    {
+        printf("%d ", arr[i]);
+        root = create_bstree(root, arr[i]);
+    }
 
-    pre_order_bstree(ptree);
+    printf("\n--> 前序遍历: ");
+    pre_order_bstree(root);
+
+    printf("\n--> 中序遍历: ");
+    middle_order_bstree(root);
+
+    printf("\n--> 后序遍历: ");
+    behind_order_bstree(root);
+
+    printf("\n--> 最大值: ");
+    Node *max = bstree_search_max(root);
+    printf(" %d", max->key);
+
+    printf("\n--> 最小值: ");
+    Node *min = bstree_search_min(root);
+    printf(" %d", min->key);
+
+    printf("\n--> 查找55节点: ");
+    Node *node = bstree_search(root, 55);
+    printf(" %d", node->key);
+
+    printf("\n--> 打印二叉树：\n");
+    printf_bstree(root, root->key, 0);
+
+    bstree_delete_key(root, 55);
+
+    printf("\n--> 最大值: ");
+    max = bstree_search_max(root);
+    printf(" %d", max->key);
+
+    printf("\n--> 前序遍历: ");
+    pre_order_bstree(root);
+    printf("\n");
+
+    destroy_bstree(root);
 
     return 0;
 }

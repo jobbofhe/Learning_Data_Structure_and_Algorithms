@@ -2,15 +2,19 @@
 * @Author: jobbofhe
 * @Date:   2019-08-18 16:54:31
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-19 20:35:04
+* @Last Modified time: 2019-08-21 20:26:07
 */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 // 定义节点
 typedef int Type;
 
 typedef struct AVLTreeNode
 {
-    TYPE key;       // 值
+    Type key;       // 值
     int height;     // 树的高度
     struct AVLTreeNode *left;
     struct AVLTreeNode *right;
@@ -45,13 +49,32 @@ int avltree_height(AVLTree tree)
     return HEIGHT(tree);
 }
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+
 
 int main(int argc, char const *argv[])
 {
     printf("test\n");
+
+    static bool stopFlag;
+    printf("%d\n", stopFlag);
     
     return 0;
 }
 
+static Node *left_left_rotation(AVLTree keyRoot)
+{
+    AVLTree keyTmp;
 
+    keyTmp = keyRoot->left;
+    keyRoot->left = keyTmp->right;
+    keyTmp->right = keyRoot;
+
+    keyRoot->height = MAX(HEIGHT(keyRoot->left), (keyRoot->right)) + 1;
+    keyTmp->height =  MAX(HEIGHT(keyTmp->left), keyRoot->height) + 1;
+
+    return keyTmp;
+}
 

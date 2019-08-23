@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-08-18 16:54:31
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-21 20:26:07
+* @Last Modified time: 2019-08-23 19:31:02
 */
 
 #include <stdio.h>
@@ -65,7 +65,8 @@ int main(int argc, char const *argv[])
 }
 
 static Node *left_left_rotation(AVLTree keyRoot)
-{
+{   
+    // 失去平衡的节点
     AVLTree keyTmp;
 
     keyTmp = keyRoot->left;
@@ -78,3 +79,17 @@ static Node *left_left_rotation(AVLTree keyRoot)
     return keyTmp;
 }
 
+static Node *right_right_rotation(AVLTree keyRoot)
+{
+    // 失去平衡的节点
+    AVLTree keyTmp;
+
+    keyTmp = keyRoot->right;
+    keyRoot->right = keyTmp->left;
+    keyTmp->left = keyRoot;
+
+    keyRoot->height = MAX(HEIGHT(keyRoot->left), (keyRoot->right)) + 1;
+    keyTmp->height =  MAX(HEIGHT(keyTmp->right), keyRoot->height) + 1;
+
+    return keyTmp;
+}

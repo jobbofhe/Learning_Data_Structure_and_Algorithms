@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-08-18 16:54:31
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-08-24 18:47:51
+* @Last Modified time: 2019-08-26 20:13:21
 */
 
 #include <stdio.h>
@@ -151,8 +151,8 @@ static Node *left_left_rotation(AVLTree keyRoot)
     keyRoot->left = keyTmp->right;
     keyTmp->right = keyRoot;
 
-    keyRoot->height = (int)MAX(HEIGHT(keyRoot->left), (keyRoot->right)) + 1;
-    keyTmp->height =  (int)MAX(HEIGHT(keyTmp->left), keyRoot->height) + 1;
+    keyRoot->height = MAX(HEIGHT(keyRoot->left), HEIGHT(keyRoot->right)) + 1;
+    keyTmp->height =  MAX(HEIGHT(keyTmp->left), keyRoot->height) + 1;
 
     return keyTmp;
 }
@@ -166,8 +166,8 @@ static Node *right_right_rotation(AVLTree keyRoot)
     keyRoot->right = keyTmp->left;
     keyTmp->left = keyRoot;
 
-    keyRoot->height = (int)MAX(HEIGHT(keyRoot->left), (keyRoot->right)) + 1;
-    keyTmp->height =  (int)MAX(HEIGHT(keyTmp->right), keyRoot->height) + 1;
+    keyRoot->height = MAX(HEIGHT(keyRoot->left), HEIGHT(keyRoot->right)) + 1;
+    keyTmp->height =  MAX(HEIGHT(keyTmp->right), keyRoot->height) + 1;
 
     return keyTmp;
 }
@@ -215,7 +215,7 @@ Node *avltree_insert_node(AVLTree tree, Type key)
             }
             else
             {
-                right_left_rotation(tree);
+                tree = right_left_rotation(tree);
             }
         }
     }
@@ -239,7 +239,7 @@ Node *avltree_insert_node(AVLTree tree, Type key)
         printf("该节点已存在!不允许添加相同节点！\n");
     }
 
-    tree->height = (int)MAX(HEIGHT(tree->left), HEIGHT(tree->right)) + 1;
+    tree->height = MAX(HEIGHT(tree->left), HEIGHT(tree->right)) + 1;
 
     return tree;
 }
@@ -473,11 +473,11 @@ void avltree_print(AVLTree tree, Type key, int direction)
     }
     else
     {
-        printf("%3d is %d’s %6s child\n", tree->key, key, direction == 1 ? "right" : "left");
+        printf("%3d is %3d’s %6s child\n", tree->key, key, direction == 1 ? "right" : "left");
     }
 
     avltree_print(tree->left, tree->key, -1);
-    avltree_print(tree->left, tree->key, 1);
+    avltree_print(tree->right, tree->key, 1);
 }
 
 // 前根序遍历
@@ -520,6 +520,7 @@ void behind_order_bstree(AVLTree tree)
 }
 
 static int arr[]= {3,2,1,4,5,6,7,16,15,14,13,12,11,10,8,9};
+
 #define ARRAY_SIZE(a) ( (sizeof(a)) / (sizeof(a[0])) )
 
 int main(int argc, char const *argv[])
@@ -546,12 +547,34 @@ int main(int argc, char const *argv[])
 
     printf("\n");
     printf("== 高度: %d\n", avltree_height(root));
-    printf("== 最小值: %d\n", avltree_max_node(root)->key);
-    printf("== 最大值: %d\n", avltree_min_node(root)->key);
+    printf("== 最小值: %d\n", avltree_min_node(root)->key);
+    printf("== 最大值: %d\n", avltree_max_node(root)->key);
     printf("== 树的详细信息: \n");
     avltree_print(root, root->key, 0);
-    // avltree_print(root, root->key, 1);
 
+    int j = 0;
+    for ( ; j < 5; j++)
+    {
+        int tmp = rand() % 100;
+        root = avltree_insert_node(root, tmp);
+    }
     
+    printf("\n");
+    printf("== 高度: %d\n", avltree_height(root));
+    printf("== 最小值: %d\n", avltree_min_node(root)->key);
+    printf("== 最大值: %d\n", avltree_max_node(root)->key);
+    printf("== 树的详细信息: \n");
+    avltree_print(root, root->key, 0);
+
+    root = avltree_delete(root, 11);
+    printf("\n");
+    printf("== 高度: %d\n", avltree_height(root));
+    printf("== 最小值: %d\n", avltree_min_node(root)->key);
+    printf("== 最大值: %d\n", avltree_max_node(root)->key);
+    printf("== 树的详细信息: \n");
+    avltree_print(root, root->key, 0);
+
+    avltree_destroy(root);
+
     return 0;
 }

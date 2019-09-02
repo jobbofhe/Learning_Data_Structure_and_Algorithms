@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-08-29 10:03:17
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-09-02 20:22:53
+* @Last Modified time: 2019-09-02 21:11:26
 */
 
 /**
@@ -18,6 +18,8 @@
  *     适合用于插入删除次数比较少，但查找多的情况。
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 // 节点定义
 typedef int Type;
@@ -214,10 +216,85 @@ Node *splaytree_search_min(SplayTree tree)
 }
 
 // 最核心的代码
+// /* 
+// 108  * 旋转key对应的节点为根节点，并返回根节点。
+// 109  *
+// 110  * 注意：
+// 111  *   (a)：伸展树中存在"键值为key的节点"。
+// 112  *          将"键值为key的节点"旋转为根节点。
+// 113  *   (b)：伸展树中不存在"键值为key的节点"，并且key < tree->key。
+// 114  *      b-1 "键值为key的节点"的前驱节点存在的话，将"键值为key的节点"的前驱节点旋转为根节点。
+// 115  *      b-2 "键值为key的节点"的前驱节点存在的话，则意味着，key比树中任何键值都小，那么此时，将最小节点旋转为根节点。
+// 116  *   (c)：伸展树中不存在"键值为key的节点"，并且key > tree->key。
+// 117  *      c-1 "键值为key的节点"的后继节点存在的话，将"键值为key的节点"的后继节点旋转为根节点。
+// 118  *      c-2 "键值为key的节点"的后继节点不存在的话，则意味着，key比树中任何键值都大，那么此时，将最大节点旋转为根节点。
+// 119  */
 // 
 Node *splaytree_splay(SplayTree tree, Type key)
 {
+    if (tree == NULL)
+    {
+        return tree;
+    }
 
+    Node tmp, *l, *r, *c;
+
+    tmp.left = tmp.right = NULL;
+    l = r = &tmp;
+
+    while(true) 
+    {
+        // 查找的节点在根节点的左子树上
+        if (key < tree->key)
+        {
+            // 如果根节点的左子树为空，也就是说，要查找的节点不存在
+            if (tree->left == NULL)
+            {
+                break;
+            }
+            // 如果要查找的节点小于根节点的左孩子的值，那么要进行右旋转
+            if (key < tree->left->key)
+            {   
+                c = tree->left;
+                tree->left = c->right;
+                c->right = tree;
+                tree = c;
+                if (tree->left == NULL)
+                {
+                    break;
+                }
+            }
+            r->left = tree;
+            r = tree;
+            tree = tree->left;
+        }
+        else if (key > tree->key)
+        {
+            if (tree->right == NULL)
+            {
+                break;
+            }
+            if (key > tree->right->key)
+            {
+                c = tree->right;
+                tree->right = c->left;
+                c->left = tree;
+                tree = c;
+                if (tree->right == NULL)
+                {
+                    break;
+                }
+            }
+            r->right = tree;
+            r = tree;
+            tree = tree->left;
+        }
+        else
+        {
+            break;
+        }
+
+    }
 }
 
 Node *splaytree_insert(SplayTree tree, Type key)

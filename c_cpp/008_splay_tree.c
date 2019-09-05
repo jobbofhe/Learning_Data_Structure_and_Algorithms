@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-08-29 10:03:17
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-09-02 21:11:26
+* @Last Modified time: 2019-09-05 21:03:41
 */
 
 /**
@@ -83,19 +83,28 @@ Node *splaytree_search_min(SplayTree tree);
 Node *splaytree_splay(SplayTree tree, Type key);
 
 /**
- * 插入伸展树一个节点，返回根节点
+ * 根据 节点值，创建节点，插入伸展树, 并且旋转
  */
 Node *splaytree_insert(SplayTree tree, Type key);
+
+/**
+ * 将一个已经创建好的节点插入伸展树， 不旋转，返回根节点
+ */
+static Node *splaytree_insert_node(SplayTree tree, Node *node);
 
 /**
  * 删除伸展树中值为key的节点，返回根节点
  */
 Node *splaytree_delete(SplayTree tree, Type key);
 
+
 /**
  * 打印伸展树的详细信息
+ * @param direction [direction  --  0，表示该节点是根节点;
+                 -1，表示该节点是它的父结点的左孩子;
+                  1，表示该节点是它的父结点的右孩子]
  */
-void splaytree_print(SplayTree tree);
+void splaytree_print(SplayTree tree, Type key, int direction);
 
 /**
  * 销毁伸展树
@@ -105,7 +114,9 @@ void splaytree_destroy(SplayTree tree);
 /**
  * 创建节点
  */
-static Node *create_node(Type key, Node *left, Node *right);
+// static Node *create_node(Type key, Node *left, Node *right);
+
+static Node *splaytree_create_node(Type key, Node *left, Node *right);
 
 // *******************************************************************************************
 
@@ -297,25 +308,158 @@ Node *splaytree_splay(SplayTree tree, Type key)
     }
 }
 
+static Node *splaytree_insert_node(SplayTree tree, Node *node)
+{
+    Node *p = tree;
+    Node *tmp = NULL;
+
+    if (p == NULL)
+    {
+        tree = node;
+
+        return tree;
+    }
+
+    // 查找插入的位置
+    while(p != NULL) 
+    {
+        tmp = p;
+        if (node->key < tmp->key)
+        {
+            p = p->left;
+        }
+        else if (node->key > tmp->key)
+        {
+            p = p->right;
+        }
+        else
+        {
+            printf("插入的值[%d]已存在树中。\n", node->key);
+            free(node);
+            return tree;
+        }
+    }
+
+    if (p->key < node->key)
+    {
+        p->right = node;
+    }
+    else
+    {
+        p->left = node;
+    }
+
+    return tree;
+}
+
+
 Node *splaytree_insert(SplayTree tree, Type key)
 {
+    Node *node = splaytree_create_node(key, NULL, NULL);
 
+    if (NULL == node)
+    {
+        printf("Faild to create node!\n");
+        return tree;
+    }
+
+    splaytree_insert_node(tree, node);
+
+    // 将新插入的节点旋转为根节点
+    splaytree_splay(tree, key);
 }
 
-
+/*
+    删除结点(key为节点的键值)，并返回根节点。
+ */
 Node *splaytree_delete(SplayTree tree, Type key)
 {
+    if (NULL == tree)
+    {
+        printf("Tree is empty!\n");
+        return NULL;
+    }
 
+    Node *p = NULL;
+
+    Node *node = splaytree_search(tree, key);
+    if (NULL == node)
+    {
+        printf("Can't find node [%d]!\n", key);
+        return tree;
+    }
+
+    // 存在节点  key, 将该节点旋转为 根节点
+    tree = splaytree_splay(tree, key);
+
+    // 此时要删除根节点，所以要将跟节点的 做孩子，旋转为根节点，然后释放根节点
+    if (tree->left != NULL)
+    {   
+        p = splaytree_splay(tree->left, key);
+        p->right = tree->right;
+    }
+    else
+    {
+        // 根节点不存在左子树，
+        p = tree->right;
+    }
+
+    free(tree);
+
+    return p;
 }
 
-void splaytree_print(SplayTree tree)
+void splaytree_print(SplayTree tree, Type key, int direction)
 {
-
+    if (tree != NULL)
+    {
+        if (direction == 0)
+        {
+            printf("%3d is root\n", tree->key);
+        }
+        else
+        {
+            printf("%3d is %3d's %8s child\n", tree->key, key, direction == 1? "right":"left");
+        }
+        splaytree_print(tree->left, tree->key, -1);
+        splaytree_print(tree->right, tree->key, 1);
+    }
 }
 
 void splaytree_destroy(SplayTree tree)
 {
+    if (NULL == tree)
+    {
+        return;
+    }
 
+    if (tree->left != NULL)
+    {
+        splaytree_destroy(tree->left);
+    }
+    if (tree->right != NULL)
+    {
+        splaytree_destroy(tree->right);
+    }
+
+    free(tree);
+}
+
+static Node *splaytree_create_node(Type key, Node *left, Node *right)
+{
+    Node *p = (Node*)malloc(sizeof(Node));
+
+    if (NULL == p)
+    {
+        printf("Faild to malloc!\n");
+        return NULL;
+    }
+
+    p->key = key;
+    p->left = left;
+    p->right = right;
+
+    return p;
 }
 
 

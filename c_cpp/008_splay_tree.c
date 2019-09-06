@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-08-29 10:03:17
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-09-05 21:03:41
+* @Last Modified time: 2019-09-06 21:03:01
 */
 
 /**
@@ -296,16 +296,22 @@ Node *splaytree_splay(SplayTree tree, Type key)
                     break;
                 }
             }
-            r->right = tree;
-            r = tree;
-            tree = tree->left;
+            l->right = tree;
+            l = tree;
+            tree = tree->right;
         }
         else
         {
             break;
         }
-
     }
+
+    l->right = tree->left;
+    r->left = tree->right;
+    tree->left = tmp.right;
+    tree->right = tmp.left;
+
+    return tree;
 }
 
 static Node *splaytree_insert_node(SplayTree tree, Node *node)
@@ -313,40 +319,41 @@ static Node *splaytree_insert_node(SplayTree tree, Node *node)
     Node *p = tree;
     Node *tmp = NULL;
 
-    if (p == NULL)
-    {
-        tree = node;
-
-        return tree;
-    }
-
     // 查找插入的位置
     while(p != NULL) 
     {
         tmp = p;
-        if (node->key < tmp->key)
+        if (node->key < p->key)
         {
             p = p->left;
         }
-        else if (node->key > tmp->key)
+        else if (node->key > p->key)
         {
             p = p->right;
         }
         else
         {
             printf("插入的值[%d]已存在树中。\n", node->key);
-            free(node);
+            if (node)
+            {
+                free(node);
+            }
+            
             return tree;
         }
     }
 
-    if (p->key < node->key)
+    if (tmp == NULL)
     {
-        p->right = node;
+        tree = node;
+    }
+    else if (node->key < tmp->key)
+    {
+        tmp->left = node;
     }
     else
     {
-        p->left = node;
+        tmp->right = node;
     }
 
     return tree;
@@ -363,10 +370,12 @@ Node *splaytree_insert(SplayTree tree, Type key)
         return tree;
     }
 
-    splaytree_insert_node(tree, node);
+    tree = splaytree_insert_node(tree, node);
 
     // 将新插入的节点旋转为根节点
-    splaytree_splay(tree, key);
+    tree = splaytree_splay(tree, key);
+
+    return tree;
 }
 
 /*
@@ -462,9 +471,46 @@ static Node *splaytree_create_node(Type key, Node *left, Node *right)
     return p;
 }
 
+static int arr[]= {10,50,40,30,20,60};
+#define SIZE(a) ( (sizeof(a)) / (sizeof(a[0])) )
 
 int main(int argc, char const *argv[])
 {
+    int i, ilen;
+    SplayTree root=NULL;
+
+    printf("---->  依次添加: ");
+    ilen = SIZE(arr);
+    for(i=0; i<ilen; i++)
+    {
+        printf("%d ", arr[i]);
+        root = splaytree_insert(root, arr[i]);
+    }
+
+    printf("\n----> 前序遍历: ");
+    pre_order_bstree(root);
+
+    printf("\n----> 中序遍历: ");
+    middle_order_bstree(root);
+
+    printf("\n----> 后序遍历: ");
+    behind_order_bstree(root);
+    printf("\n");
+
+    printf("---->  最小值: %d\n", splaytree_search_min(root)->key);
+    printf("---->  最大值: %d\n", splaytree_search_max(root)->key);
+    printf("---->  树的详细信息: \n");
+    splaytree_print(root, root->key, 0);
+
+    i = 10;
+    printf("\n== 旋转节点(%d)为根节点\n", i);
+    printf("---->  树的详细信息: \n");
+    root = splaytree_splay(root, i);
+    splaytree_print(root, root->key, 0);
+
+    // 销毁伸展树
+    splaytree_destroy(root);
+
     
     return 0;
 }

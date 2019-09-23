@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-09-11 21:01:00
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-09-19 20:16:04
+* @Last Modified time: 2019-09-23 20:42:46
 */
 
 /**
@@ -208,26 +208,232 @@ int rbtree_insert(RBRoot *root, Type key);
  */
 static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent);
 
+/**
+ * 红黑树删除节点
+ * @param root [树根]
+ * @param node [要删除的节点]
+ */
+void rbtree_delete_node(RBRoot *root, Node *node);
 
+/* 
+ * 删除键值为key的结点
+ *
+ * 参数说明：
+ *     tree 红黑树的根结点
+ *     key 键值
+ */
+void rbtree_delete(RBRoot *root, Type key);
 
+/**
+ * 销毁红黑树
+ */
+static void rbtree_destroy_tree(RBTree tree);
 
+void rbtree_destroy(RBRoot *root);
 
+/*
+ * 打印"红黑树"
+ *
+ * tree       -- 红黑树的节点
+ * key        -- 节点的键值 
+ * direction  --  0，表示该节点是根节点;
+ *               -1，表示该节点是它的父结点的左孩子;
+ *                1，表示该节点是它的父结点的右孩子。
+ */
+static void rbtree_print(RBTree tree, Type key, int direction);
 
-
-
-
+void print_rbtree(RBRoot *root);
 
 
 // 函数定义
 
 
+void print_rbtree(RBRoot *root)
+{
+    if (root!=NULL && root->node!=NULL)
+    {
+        rbtree_print(root->node, root->node->key, 0);
+    }
+}
+
+static void rbtree_print(RBTree tree, Type key, int direction)
+{
+    if(tree != NULL)
+    {
+        if(direction==0)    // tree是根节点
+        {
+            printf("%2d(B) is root\n", tree->key);
+        }
+        else                // tree是分支节点
+        {
+            printf("%2d(%s) is %4d's %6s child\n", tree->key, RB_IS_RED(tree)?"R":"B", key, direction==1?"right" : "left");
+        }
+
+        rbtree_print(tree->left, tree->key, -1);
+        rbtree_print(tree->right,tree->key,  1);
+    }
+}
+
+void rbtree_destroy(RBRoot *root)
+{
+    if(root)
+    {
+        rbtree_destroy_tree(root->node);
+    }
+}
+
+static void rbtree_destroy_tree(RBTree tree)
+{
+    if (tree == NULL)
+    {
+        return;
+    }
+
+    if (tree->left != NULL)
+    {
+        rbtree_destroy_tree(tree->left);
+    }
+    if (tree->right != NULL)
+    {
+        rbtree_destroy_tree(tree->right);
+    }
+
+    free(tree);
+}
 
 
+void rbtree_delete_node(RBRoot *root, Node *node)
+{
+    Node *child, *parent;
+    int color;
 
+    // 被删除节点的"左右孩子都不为空"的情况。
+    if ( (node->left!=NULL) && (node->right!=NULL) ) 
+    {
+        // 被删节点的后继节点。(称为"取代节点")
+        // 用它来取代"被删节点"的位置，然后再将"被删节点"去掉。
+        Node *replace = node;
 
+        // 获取后继节点
+        replace = replace->right;
+        while (replace->left != NULL)
+        {
+            replace = replace->left;
+        }
 
+        // "node节点"不是根节点(只有根节点不存在父节点)
+        if (RB_PARENT(node))
+        {
+            if (RB_PARENT(node)->left == node)
+            {
+                RB_PARENT(node)->left = replace;
+            }
+            else
+            {
+                RB_PARENT(node)->right = replace;
+            }
+        } 
+        else 
+        {
+            // "node节点"是根节点，更新根节点。
+            root->node = replace;
+        }
 
+        // child是"取代节点"的右孩子，也是需要"调整的节点"。
+        // "取代节点"肯定不存在左孩子！因为它是一个后继节点。
+        child = replace->right;
+        parent = RB_PARENT(replace);
+        // 保存"取代节点"的颜色
+        color = RB_COLOR(replace);
 
+        // "被删除节点"是"它的后继节点的父节点"
+        if (parent == node)
+        {
+            parent = replace;
+        } 
+        else
+        {
+            // child不为空
+            if (child)
+            {
+                RB_SET_PARENT(child, parent);
+            }
+            parent->left = child;
+
+            replace->right = node->right;
+            RB_SET_PARENT(node->right, replace);
+        }
+
+        replace->parent = node->parent;
+        replace->color = node->color;
+        replace->left = node->left;
+        node->left->parent = replace;
+
+        if (color == BLACK)
+        {
+            rbtree_delete_fixup(root, child, parent);
+        }
+        free(node);
+
+        return ;
+    }
+
+    if (node->left !=NULL)
+    {
+        child = node->left;
+    }
+    else 
+    {
+        child = node->right;
+    }
+
+    parent = node->parent;
+    // 保存"取代节点"的颜色
+    color = node->color;
+
+    if (child)
+    {
+        child->parent = parent;
+    }
+
+    // "node节点"不是根节点
+    if (parent)
+    {
+        if (parent->left == node)
+        {
+            parent->left = child;
+        }
+        else
+        {
+            parent->right = child;
+        }
+    }
+    else
+    {
+        root->node = child;
+    }
+
+    if (color == BLACK)
+    {
+        rbtree_delete_fixup(root, child, parent);
+    }
+    free(node);
+}
+
+/* 
+ * 删除键值为key的结点
+ *
+ * 参数说明：
+ *     tree 红黑树的根结点
+ *     key 键值
+ */
+void rbtree_delete(RBRoot *root, Type key)
+{
+    Node *z, *node; 
+
+    if ((z = search(root->node, key)) != NULL)
+        rbtree_delete_node(root, z);
+}
 
 static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
 {
@@ -241,7 +447,7 @@ static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
             tmp = parent->right;
             if (RB_IS_RED(tmp))
             {
-                // Case 1: x的兄弟w是红色的  
+                // Case 1: node的兄弟w是红色的  
                 RB_SET_BLACK(tmp);
                 RB_SET_RED(parent);
                 rbtree_left_rotate(root, parent);
@@ -250,7 +456,7 @@ static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
             if ((!tmp->left || RB_IS_BLACK(tmp->left)) &&
                 (!tmp->right || RB_IS_BLACK(tmp->right)))
             {
-                // Case 2: x的兄弟w是黑色，且w的俩个孩子也都是黑色的  
+                // Case 2: node的兄弟w是黑色，且w的俩个孩子也都是黑色的  
                 RB_SET_RED(tmp);
                 node = parent;
                 parent = RB_PARENT(node);
@@ -259,13 +465,13 @@ static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
             {
                 if (!tmp->right || RB_IS_BLACK(tmp->right))
                 {
-                    // Case 3: x的兄弟w是黑色的，并且w的左孩子是红色，右孩子为黑色。  
+                    // Case 3: node的兄弟w是黑色的，并且w的左孩子是红色，右孩子为黑色。  
                     RB_SET_BLACK(tmp->left);
                     RB_SET_RED(tmp);
                     rbtree_right_rotate(root, tmp);
                     tmp = parent->right;
                 }
-                // Case 4: x的兄弟w是黑色的；并且w的右孩子是红色的，左孩子任意颜色。
+                // Case 4: node的兄弟w是黑色的；并且w的右孩子是红色的，左孩子任意颜色。
                 RB_SET_COLOR(tmp, RB_COLOR(parent));
                 RB_SET_BLACK(parent);
                 RB_SET_BLACK(tmp->right);
@@ -279,7 +485,7 @@ static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
             tmp = parent->left;
             if (RB_IS_RED(tmp))
             {
-                // Case 1: x的兄弟w是红色的  
+                // Case 1: node的兄弟w是红色的  
                 RB_SET_BLACK(tmp);
                 RB_SET_RED(parent);
                 rbtree_right_rotate(root, parent);
@@ -288,7 +494,7 @@ static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
             if ((!tmp->left || RB_IS_BLACK(tmp->left)) &&
                 (!tmp->right || RB_IS_BLACK(tmp->right)))
             {
-                // Case 2: x的兄弟w是黑色，且w的俩个孩子也都是黑色的  
+                // Case 2: node的兄弟w是黑色，且w的俩个孩子也都是黑色的  
                 RB_SET_RED(tmp);
                 node = parent;
                 parent = RB_PARENT(node);
@@ -297,13 +503,13 @@ static void rbtree_delete_fixup(RBRoot *root, Node *node, Node *parent)
             {
                 if (!tmp->left || RB_IS_BLACK(tmp->left))
                 {
-                    // Case 3: x的兄弟w是黑色的，并且w的左孩子是红色，右孩子为黑色。  
+                    // Case 3: node的兄弟w是黑色的，并且w的左孩子是红色，右孩子为黑色。  
                     RB_SET_BLACK(tmp->right);
                     RB_SET_RED(tmp);
                     rbtree_left_rotate(root, tmp);
                     tmp = parent->left;
                 }
-                // Case 4: x的兄弟w是黑色的；并且w的右孩子是红色的，左孩子任意颜色。
+                // Case 4: node的兄弟w是黑色的；并且w的右孩子是红色的，左孩子任意颜色。
                 RB_SET_COLOR(tmp, RB_COLOR(parent));
                 RB_SET_BLACK(parent);
                 RB_SET_BLACK(tmp->left);
@@ -359,13 +565,22 @@ static Node *create_node(Type key, Node *parent, Node *left, Node *right)
     return p;
 }
 
+/**
+ * 思路：
+ * 1. 找到要插入的位置，通过比较节点的key 值 大小
+ * 2. 找到位置之后， 将找到的节点y 设置为新节点的父节点
+ *     2.1 如果找到的节点 y 是空的， 即树为空，那么新的节点就设置为根节点
+ *     2.2 如果找到节点Y不为空，则 判确定新节点 是节点 y的那个孩子
+ * 3. 着色，一般的将插入的节点颜色，全部标为 红色
+ * 4. 修正因插入导致的 红黑树失衡问题
+ */
 static void rbtree_insert_node(RBRoot *root, Node *node)
 {
     Node *y = NULL;
     Node *p = root->node;
 
 
-    // 找打要插入的位置
+    // 找到要插入的位置
     while(p != NULL) 
     {
         y = p;
@@ -380,10 +595,10 @@ static void rbtree_insert_node(RBRoot *root, Node *node)
     }
 
     // 找到y 是要插入的位置
-    // 将新节点的父节点 找到的y
+    // 将新节点的父节点 设置为y
     RB_PARENT(node) = y;
 
-    // 确定要插入的节点node 是 y的那个孩子
+    // 确定要插入的节点node 是 y的那个(左还是右)孩子
     if (y != NULL)
     {
         if (node->key < y->key)
@@ -405,16 +620,37 @@ static void rbtree_insert_node(RBRoot *root, Node *node)
     node->color = RED;
 
     rbtree_insert_fixup(root, node);
-
-
 }
 
+/**
+ * 思路：
+ * 因插入导致红黑树失衡的解决思路
+ * 1. 插入节点之后，如果父节点不存在，即插入的节点就是树根，那么将其设置为黑色
+ * 2. 如果父节点存在，并且是【红色】
+ *     2.1 如果父节点 是 祖父节点 的【左孩子】
+ *         2.1.1 如果叔叔节点存在，则叔叔节点是祖父节点的【右孩子】，并且此时叔叔节点 如果 是 【红色】
+ *               此时将 叔叔节点 和 父亲节点都设置 为【黑色】，并且将 祖父节点设置 为 【红色】
+ *               如果叔叔节点是黑色， 并且新插入的节点是父节点的右孩子
+ *                   左旋
+ *               如果叔叔节点是黑色， 并且新插入的节点是父节点的左孩子
+ *                   右旋
+ *     2.2 如果父节点 是 祖父节点 的右孩子
+ *         与上旋转相反
+ * 3. 如果费节点存在，并且父节点是黑色，则树有效，不需要旋转
+ *
+ *
+ * 红黑树插入的几种情况：
+ * 情况1，z的叔叔y是红色的。
+ * 情况2：z的叔叔y是黑色的，且z是右孩子
+ * 情况3：z的叔叔y是黑色的，且z是左孩子
+ * 
+ */
 static void rbtree_insert_fixup(RBRoot *root, Node *z)
 {
     Node *parent, *gparent;
 
     // 如果父节点存在，并且父节点的颜色是红色
-    while((parent = RB_PARENT(z)) && RB_IS_RED(z)) 
+    while((parent = RB_PARENT(z)) && RB_IS_RED(parent)) 
     {
         gparent = RB_PARENT(parent);
 

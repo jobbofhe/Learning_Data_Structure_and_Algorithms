@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-09-11 21:01:00
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-09-23 20:42:46
+* @Last Modified time: 2019-09-24 16:13:38
 */
 
 /**
@@ -530,7 +530,7 @@ int rbtree_insert(RBRoot *root, Type key)
     Node *node = NULL;
 
     // 不允许插入相同的节点，首先查找朝如的数据是否已经存在
-    if (search(root->node, key) == NULL)
+    if (search(root->node, key) != NULL)
     {
         return -1;
     }
@@ -1022,7 +1022,7 @@ void rbtree_behindorder(RBTree tree)
 {
     if (tree == NULL)
     {
-        printf("Red tree is empty!\n");
+        // printf("Red tree is empty!\n");
         return ;
     }
 
@@ -1036,7 +1036,7 @@ void rbtree_inorder(RBTree tree)
 {
     if (tree == NULL)
     {
-        printf("Red tree is empty!\n");
+        // printf("Red tree is empty!\n");
         return ;
     }
 
@@ -1049,7 +1049,7 @@ void rbtree_preorder(RBTree tree)
 {
     if (tree == NULL)
     {
-        printf("Red tree is empty!\n");
+        // printf("Red tree is empty!\n");
         return ;
     }
 
@@ -1077,8 +1077,69 @@ RBRoot *create_rbtree()
  * 测试
  */
 
+#define LENGTH(a) ( (sizeof(a)) / (sizeof(a[0])) )
+
+#define SWITCH_INSERT 1    // 打印插入信息开关(0，关闭；1，打开)
+#define SWITCH_DELETE 1    // 打印删除信息开关(0，关闭；1，打开)
+
 int main(int argc, char const *argv[])
 {
-    /* code */
-    return 0;
+    
+    int a[] = {11, 41, 32, 62, 93, 73, 24, 54, 85};
+    int i, ilen=LENGTH(a);
+    RBRoot *root=NULL;
+
+    root = create_rbtree();
+    printf("------ 原始数据: ");
+    for(i=0; i<ilen; i++)
+    {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+    for(i=0; i<ilen; i++)
+    {
+        rbtree_insert(root, a[i]);
+#if SWITCH_INSERT
+        printf("------ 添加节点: %d\n", a[i]);
+        printf("------ 树的详细信息: \n");
+        print_rbtree(root);
+        printf("\n");
+#endif
+    }
+
+    printf("------ 前序遍历: ");
+    rbtree_preorder(root->node);
+
+    printf("\n------ 中序遍历: ");
+    rbtree_inorder(root->node);
+
+    printf("\n------ 后序遍历: ");
+    rbtree_behindorder(root->node);
+    printf("\n");
+
+    if (rbtree_search_min(root, &i)==0)
+        printf("------ 最小值: %d\n", i);
+    if (rbtree_search_max(root, &i)==0)
+        printf("------ 最大值: %d\n", i);
+    printf("------ 树的详细信息: \n");
+    print_rbtree(root);
+    printf("\n");
+
+#if SWITCH_DELETE
+    for(i=0; i<ilen; i++)
+    {
+        rbtree_delete(root, a[i]);
+
+        printf("------ 删除节点: %d\n", a[i]);
+        if (root)
+        {
+            printf("------ 树的详细信息: \n");
+            print_rbtree(root);
+            printf("\n");
+        }
+    }
+#endif
+
+    rbtree_destroy(root);
 }

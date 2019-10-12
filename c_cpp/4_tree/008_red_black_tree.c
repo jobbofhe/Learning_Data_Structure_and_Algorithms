@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-09-11 21:01:00
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-09-24 16:13:38
+* @Last Modified time: 2019-09-26 21:17:49
 */
 
 /**
@@ -714,7 +714,6 @@ static void rbtree_insert_fixup(RBRoot *root, Node *z)
             RB_SET_BLACK(parent);
             RB_SET_RED(gparent);
             rbtree_left_rotate(root, gparent);
-
         }
     }
 

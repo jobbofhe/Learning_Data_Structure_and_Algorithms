@@ -2,11 +2,15 @@
 * @Author: jobbofhe
 * @Date:   2019-10-28 19:52:22
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-10-28 20:37:56
+* @Last Modified time: 2019-11-01 16:34:17
 */
 
+/**
+ * 邻接矩阵实现的map 
+ */
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 
 #define  IS_LETTER(c)   ( (((c) >= 'a') && ((c) <= 'z')) || (((c) >= 'A') && ((c) <= 'Z')) )
 #define  LENGTH(c)      (sizeof(c)/(sizeof(c[0])))
@@ -113,13 +117,51 @@ Graph *create_graph()
 
 }
 
+/*
+ * 创建图(用已提供的矩阵)
+ */
+Graph* create_graph_2(char *vertex, char edges[][2], int vlen, int elen)
+{
+    int i, p1, p2;
+    Graph* pG;
+    
+    if ((pG=(Graph*)malloc(sizeof(Graph))) == NULL )
+        return NULL;
+    memset(pG, 0, sizeof(Graph));
+
+    // 初始化"顶点数"和"边数"
+    pG->vertex_number = vlen;
+    pG->edge_number = elen;
+    printf("顶点数量： %d  边数 :%d\n", vlen, elen);
+    // 初始化"顶点"
+    for (i = 0; i < pG->vertex_number; i++)
+    {
+        pG->vertex[i] = vertex[i];
+    }
+
+    // 初始化"边"
+    for (i = 0; i < pG->edge_number; i++)
+    {
+        // 读取边的起始顶点和结束顶点
+        p1 = get_position(*pG, edges[i][0]);
+        p2 = get_position(*pG, edges[i][1]);
+
+        // 如果是无向图，那么两个方向都设为1
+        // 如果是有向图，则 pG->matrix[p1][p2] = 1;
+        pG->matrix[p1][p2] = 1;
+        pG->matrix[p2][p1] = 1;
+    }
+
+    return pG;
+}
+
 void print_graph(Graph graph)
 {
     printf("顶点数量： %d\n", graph.vertex_number);
 
     for (int i = 0; i < graph.vertex_number; ++i)
     {
-        for (int j = 0; j < graph.vertex_number; ++i)
+        for (int j = 0; j < graph.vertex_number; ++j)
         {
             printf("%d ", graph.matrix[i][j]);
         }
@@ -129,11 +171,22 @@ void print_graph(Graph graph)
 
 int main(int argc, char const *argv[])
 {
-    /* code */
+    char vertex[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+    char edges[][2] = {
+        {'A', 'C'}, 
+        {'A', 'D'}, 
+        {'A', 'F'}, 
+        {'B', 'C'}, 
+        {'C', 'D'}, 
+        {'F', 'G'},
+        {'G', 'E'},
+        {'E', 'H'}}; 
 
-    Graph* p_graph = create_graph();
+    Graph* p_graph_2 = create_graph_2(vertex, edges, LENGTH(vertex), LENGTH(edges));
+    print_graph(*p_graph_2);
 
-    print_graph(*p_graph);
+    // Graph* p_graph = create_graph();
+    // print_graph(*p_graph);
 
     return 0;
 }

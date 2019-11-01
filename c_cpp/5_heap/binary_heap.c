@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-10-14 19:21:57
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-10-15 15:21:49
+* @Last Modified time: 2019-10-16 11:08:15
 */
 
 #include <stdio.h>
@@ -51,8 +51,6 @@ static void max_heap_fixup_down(int start, int end)
     int curr_node_pos = start;
     int left_child = 2*start+1;
     int curr_node_data = heap_arr[curr_node_pos];
-
-
 
     while(left_child <= end) 
     {
@@ -196,8 +194,6 @@ int main(int argc, char const *argv[])
     printf("\n---> 删除元素之后 最大堆: ");
     max_heap_print();
     printf("\n");
-
-
 
     return 0;
 }

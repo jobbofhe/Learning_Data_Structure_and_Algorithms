@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-10-28 19:52:22
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-11-01 16:34:17
+* @Last Modified time: 2019-11-04 19:29:04
 */
 
 /**
@@ -118,7 +118,7 @@ Graph *create_graph()
 }
 
 /*
- * 创建图(用已提供的矩阵)
+ * 创建图(用已提供的图数据)
  */
 Graph* create_graph_2(char *vertex, char edges[][2], int vlen, int elen)
 {

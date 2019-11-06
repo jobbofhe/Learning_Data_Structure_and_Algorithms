@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-11-06 17:38:21
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-11-06 19:46:41
+* @Last Modified time: 2019-11-06 19:57:57
 */
 
 #include <stdio.h>
@@ -165,13 +165,12 @@ void deep_first_search(Graph graph)
 {
 	// 节点被访问标记
 	int flag_visited[MAX_VERTEX];
-
 	for (int i = 0; i < graph.vertex_number; ++i)
 	{
 		// 访问之前所有顶点被访问标记置为0
 		flag_visited[i] = 0;
 	}
-
+	printf("------------ DFS -------------\n");
 	for (int i = 0; i < graph.vertex_number; ++i)
 	{
 		if (flag_visited[i] == 0)
@@ -180,6 +179,51 @@ void deep_first_search(Graph graph)
 		}
 	}
 
+	printf("\n");
+}
+
+/**
+ * 广度优先遍历图
+ */
+void breadth_first_search(Graph graph)
+{
+	int tmp_array[MAX_VERTEX];
+	// 节点被访问标记
+	int flag_visited[MAX_VERTEX];
+	for (int i = 0; i < graph.vertex_number; ++i)
+	{
+		// 访问之前所有顶点被访问标记置为0
+		flag_visited[i] = 0;
+	}
+
+	printf("---------- BFS ----------\n");
+
+	int head = 0;
+	int tail = 0;
+	for (int i = 0; i < graph.vertex_number; ++i)
+	{
+		if (flag_visited[i] == 0)
+		{
+			flag_visited[i] = 1;
+			printf("%c ", graph.vertex[i]);
+			tmp_array[tail++] = i; // 已经访问过的写入临时数组
+		}
+
+		while(head != tail) 
+		{
+			int j = tmp_array[head++]; // 将已经访问过的节点取出来
+			for (int k = get_vertex_first_index(graph, j); k > 0; k = get_vertex_next_index(graph, j, k))
+			{
+				if (flag_visited[k] == 0)
+				{
+					flag_visited[k] = 1;
+					printf("%c ", graph.vertex[k]);
+					tmp_array[tail++] = k;
+				}
+			}
+			
+		}
+	}
 	printf("\n");
 }
 
@@ -200,6 +244,8 @@ int main(int argc, char const *argv[])
     print_graph(*p_graph_2);
 
     deep_first_search(*p_graph_2);
+
+    breadth_first_search(*p_graph_2);
 
     return 0;
 }

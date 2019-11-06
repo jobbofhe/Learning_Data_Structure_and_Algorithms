@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-11-01 16:44:27
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-11-04 20:06:57
+* @Last Modified time: 2019-11-05 09:45:09
 */
 
 #include <stdio.h>
@@ -100,7 +100,6 @@ ListGraph* create_graph(char *vertex, char edges[][2], int vlen, int elen)
         // A-->B
         node1 = (Node *)malloc(sizeof(Node));
         node1->index_vex = p2;
-
         // 将node1, 插在链表末尾
         if (pG->vertex[p1].first_edge == NULL)
         {

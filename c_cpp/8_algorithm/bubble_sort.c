@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-11-11 19:24:34
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-11-11 19:55:23
+* @Last Modified time: 2019-11-11 19:56:27
 */
 
 /**
@@ -40,6 +40,35 @@ void bubble_sort(int a[], int size)
 	}
 }
 
+/**
+ * 改进上述接口的缺点
+ * 改进方法：一旦数组有序之后则停止排序
+ */
+void bubble_sort_v2(int a[], int size)
+{
+	int flag= 0;
+
+	for (int i = size-1; i > 0; i--)
+	{
+		flag = 0;
+		for (int j = 0; j < i; j++)
+		{
+			if (a[j] > a[j+1])
+			{
+				swap(&(a[j]), &(a[j+1]));
+				flag = 1;   // 数组无序，发生交换，交换标识记为1
+			}
+		}
+
+		// 如果循环一次之后，发现标识为0，说明，数组已经有序
+		if (0 == flag)
+		{
+			break;
+		}
+	}
+}
+
+
 void print(int a[], int size)
 {
 	for (int i = 0; i < size; ++i)
@@ -56,7 +85,8 @@ int main(int argc, char const *argv[])
 	printf("排序之前： ");
 	print(array, size);
 
-	bubble_sort(array, size);
+	// bubble_sort(array, size);
+	bubble_sort_v2(array, size);
 
 	printf("排序之后： ");
 	print(array, size);

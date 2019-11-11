@@ -2,12 +2,13 @@
 * @Author: jobbofhe
 * @Date:   2019-11-06 17:38:21
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-11-06 19:57:57
+* @Last Modified time: 2019-11-11 18:13:56
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <string.h>
 
 #define  IS_LETTER(c)   ( (((c) >= 'a') && ((c) <= 'z')) || (((c) >= 'A') && ((c) <= 'Z')) )
 #define  LENGTH(c)      (sizeof(c)/(sizeof(c[0])))
@@ -196,7 +197,7 @@ void breadth_first_search(Graph graph)
 		flag_visited[i] = 0;
 	}
 
-	printf("---------- BFS ----------\n");
+	printf("------------ BFS -------------\n");
 
 	int head = 0;
 	int tail = 0;

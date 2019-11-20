@@ -89,6 +89,8 @@ void print(int a[], int size)
 
 int main(int argc, char const *argv[])
 {
+	printf("冒泡排序：\n");
+
 	int array[] = {30, 40, 10, 5, 90, 50, 66, 99, 3};
 	int size = LEN(array);
 	printf("排序之前： ");

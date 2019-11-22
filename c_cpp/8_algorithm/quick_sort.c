@@ -52,23 +52,29 @@ void quick_sort(int a[], int l_border, int r_border)
 
 		while(l < r) 
 		{
+			// 如果右边的值大于基准, 则继续向前访问
 			while (l < r && a[r] > tmp)
 			{
 				r--;
 			}
+			// 如果还是乱序，则说明右边的值小于基准，则交换顺序
 			if (l < r)
 			{
 				a[l++] = a[r];
 			}
+
+			// 如果左边的值小于基准，继续向前访问
 			while(l < r && a[l] < tmp)
 			{
 				l++;
 			}
+			// 如果还是乱序，说明左边的值大于基准，需要交换
 			if (l < r)
 			{
 				a[r--] = a[l];
 			}
 		}
+		// 停下来的位置，就是基准的所在位置
 		a[l] = tmp;
 		quick_sort(a, l_border, l-1);
 		quick_sort(a, l+1, r);

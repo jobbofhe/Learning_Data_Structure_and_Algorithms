@@ -71,7 +71,7 @@ void print(int a[], int size)
 
 int main(int argc, char const *argv[])
 {
-	printf("选择排序：\n");
+	printf("希尔排序：\n");
 	
 	int array[] = {30, 40, 10, 5, 90, 50, 66, 99, 3};
 	int size = LEN(array);

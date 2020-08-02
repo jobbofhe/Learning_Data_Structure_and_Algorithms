@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-02 13:17:23
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-02 23:30:45
+* @Last Modified time: 2020-08-03 00:27:48
 */
 
 /**
@@ -287,81 +287,12 @@ void destroy_list(List *list)
 	}
 }
 
-#if 0
-
 /**
  * 删除链表中倒数第 K 个点
- */
-void delete_ordered_k_node(List *list, int k)
-{
-	if (!list || k <= 0)
-	{
-		return;
-	}
-
-	Node *head = list;
-	if(head->next == NULL)
-	{
-		if (k == 1)
-		{
-			free(list);
-			list = NULL;
-			return;
-		}
-		else
-		{
-			return;
-		}
-	}
-
-	int size = get_list_size(list);
-	if (k > size)
-	{
-		printf("\nk [%d] 大于链表长度 [%d]\n", k, size);
-		return ;
-	}
-	else if (k == 10)
-	{
-		printf("\n删除头节点\n");
-		head = list->next;
-		free(list);
-		list = head;
-	}
-	else
-	{
-		Node *pSlow = list;
-		Node *pFast = list;
-		Node *pPre =  NULL;
-		int count = 0;
-
-		// 快指针向前到 k-1 位置
-		while(count++ != (k-1)) 
-		{
-			pFast = pFast->next;
-		}
-
-		// 快 慢指针同时前进
-		while(pFast->next) 
-		{
-			pPre = pSlow;
-			pSlow = pSlow->next;
-			pFast = pFast->next;
-		}
-
-		pPre->next = pSlow->next;
-		pSlow->next = NULL;
-		free(pSlow);
-		pSlow = NULL;
-
-		printf("\n倒数第 [%d] 个节点是：%d\n", k, pSlow->value);
-	}
-}
-
-#endif 
-
-
-/**
- * 删除链表中倒数第 K 个点
+ * 思路：
+ * 1. 对于没有头节点的链表来说，如果仅存在一个节点，如果 k == 1,则删除头节点，否则推出
+ * 2. 快慢指针，快指针先前进 k-1 步骤，然后慢指针和快指针同时前进，等到快指针到达结尾的时候，慢指针指向的节点就是倒数第k个
+ * 3. 删除满指针指向的节点
  */
 void delete_ordered_k_node(List **list, int k)
 {
@@ -429,6 +360,51 @@ void delete_ordered_k_node(List **list, int k)
 	}
 }
 
+/**
+ * 检测链表有没有环
+ * 思路：
+ * 1. 创建快慢指针，快指针每次前进两个节点，慢指针前进一个节点，如果两根指针存在相等，则有环
+ * 2. 如果快指针首先指向空，则没有环
+ */
+bool detect_ring_in_link(List *list)
+{
+	Node *head = list;
+
+	Node *pFast = head;
+	Node *pSlow = head;
+
+	while(pFast->next && pSlow->next) 
+	{
+		pFast = pFast->next->next;
+		pSlow = pSlow->next;
+
+		if (pSlow == pFast)	
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void test_detect_ring_in_link(List *list)
+{
+	// set ring
+	Node *head = list;
+	Node *p = list;
+
+	while(p->next) 
+	{
+		p = p->next;
+	}
+	p->next = head;
+	list = p;
+
+	printf("\n检测链表中是否存在环：\n");
+	bool flag = detect_ring_in_link(list);
+	printf("\n%s\n", flag==true?"Yes":"No");
+}
+
 void test_delete_ordered_k_node(List **list)
 {
 	int k = 10;
@@ -489,6 +465,9 @@ int main(int argc, char const *argv[])
 
 	// test 3: delte reciprocal K node
 	test_delete_ordered_k_node(&list);
+
+	// test 4: detect rings
+	test_detect_ring_in_link(list);
 
 	// 2. destroy list
 	destroy_list(list);

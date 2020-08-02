@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-02 13:17:23
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-02 17:09:02
+* @Last Modified time: 2020-08-02 23:30:45
 */
 
 /**
@@ -42,6 +42,7 @@ int insertNodeToListTail(List *pList, Node *node)
 	}
 	else
 	{
+		// 不带头节点
 		while(pList->next) {
 			
 			pList = pList->next;
@@ -71,6 +72,29 @@ Node *createNode(int value)
 	return node;	
 }
 
+int get_list_size(List *list)
+{
+	if (!list)
+	{
+		return 0;
+	}
+
+	int count = 0;
+
+	List *p = list;
+	while(p->next) 
+	{
+		count++;
+		p = p->next;
+	}
+	count++;
+
+	return count;
+}
+
+/**
+ * 不带头节点
+ */
 List *createList()
 {
 	List * list = (List*)malloc(sizeof(List));
@@ -99,6 +123,17 @@ void print_list(List *pList)
 	printf("\n");
 }
 
+/**
+ * 查找链表的中间节点.
+ * 思路：
+ * 1. 快指针每次前进两个节点，慢节点每次前进一个节点
+ * 2. 如果快指针走到了末尾，或者快指针的下一个节点走到了末尾，停止
+ * 3. 此时，慢指针指向的位置就是中间节点
+ *
+ * 说明：这里链表节点数有奇数和偶数之分，奇数不用考虑了。如果是偶数，则取上中位置
+ * 例如：1 2 3 4 5 6
+ * 中间节点为3
+ */
 Node *find_middle_node(List *list)
 {
 	Node *pFast = NULL, *pSlow = NULL;
@@ -114,7 +149,7 @@ Node *find_middle_node(List *list)
 	return pSlow;
 }
 
-List * local_reverse(List * head) 
+List *local_reverse(List * head) 
 {
     List * beg = NULL;
     List * end = NULL;
@@ -199,7 +234,14 @@ List * reverse_list_3(List *list)
 	}
 }
 
-
+/**
+ * 判断链表是否是回文
+ * 思路：
+ * 1. 找到链表的中间节点
+ * 2. 反转后半部分链表
+ * 3. 重新便利原链表和反转之后的后半部分链表，一一比较数值
+ * 4. 返回之前回复被逆转的链表
+ */
 bool is_palindrome(List *list)
 {
 	Node *pHead = list;
@@ -245,25 +287,170 @@ void destroy_list(List *list)
 	}
 }
 
-int main(int argc, char const *argv[])
+#if 0
+
+/**
+ * 删除链表中倒数第 K 个点
+ */
+void delete_ordered_k_node(List *list, int k)
 {
-	// 1. create list
-	List *pHead = NULL;
-	List *list = createList();
-	insertNodeToListTail(list, createNode(2));
-	insertNodeToListTail(list, createNode(3));
-	insertNodeToListTail(list, createNode(4));
-	insertNodeToListTail(list, createNode(5));
-	insertNodeToListTail(list, createNode(4));
-	insertNodeToListTail(list, createNode(3));
-	insertNodeToListTail(list, createNode(2));
-	insertNodeToListTail(list, createNode(10));
+	if (!list || k <= 0)
+	{
+		return;
+	}
 
-	print_list(list);
+	Node *head = list;
+	if(head->next == NULL)
+	{
+		if (k == 1)
+		{
+			free(list);
+			list = NULL;
+			return;
+		}
+		else
+		{
+			return;
+		}
+	}
 
-	// 2. judge palindrome
+	int size = get_list_size(list);
+	if (k > size)
+	{
+		printf("\nk [%d] 大于链表长度 [%d]\n", k, size);
+		return ;
+	}
+	else if (k == 10)
+	{
+		printf("\n删除头节点\n");
+		head = list->next;
+		free(list);
+		list = head;
+	}
+	else
+	{
+		Node *pSlow = list;
+		Node *pFast = list;
+		Node *pPre =  NULL;
+		int count = 0;
 
-	printf("Is palindrome?\n");
+		// 快指针向前到 k-1 位置
+		while(count++ != (k-1)) 
+		{
+			pFast = pFast->next;
+		}
+
+		// 快 慢指针同时前进
+		while(pFast->next) 
+		{
+			pPre = pSlow;
+			pSlow = pSlow->next;
+			pFast = pFast->next;
+		}
+
+		pPre->next = pSlow->next;
+		pSlow->next = NULL;
+		free(pSlow);
+		pSlow = NULL;
+
+		printf("\n倒数第 [%d] 个节点是：%d\n", k, pSlow->value);
+	}
+}
+
+#endif 
+
+
+/**
+ * 删除链表中倒数第 K 个点
+ */
+void delete_ordered_k_node(List **list, int k)
+{
+	Node *head = *list;
+
+	if (!head || k <= 0)
+	{
+		return;
+	}
+
+	if(head->next == NULL)
+	{
+		if (k == 1)
+		{
+			free(*list);
+			*list = NULL;
+			return;
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	int size = get_list_size(*list);
+	if (k > size)
+	{
+		printf("\nk [%d] 大于链表长度 [%d]\n", k, size);
+		return ;
+	}
+	else if (k == 10)
+	{
+		printf("\n删除头节点\n");
+		head = (*list)->next;
+		free(*list);
+		*list = head;
+	}
+	else
+	{
+		Node *pSlow = head;
+		Node *pFast = head;
+		Node *pPre =  NULL;
+		int count = 0;
+
+		// 快指针向前到 k-1 位置
+		while(count++ != (k-1)) 
+		{
+			pFast = pFast->next;
+		}
+
+		// 快 慢指针同时前进
+		while(pFast->next) 
+		{
+			pPre = pSlow;
+			pSlow = pSlow->next;
+			pFast = pFast->next;
+		}
+
+		pPre->next = pSlow->next;
+		pSlow->next = NULL;
+		free(pSlow);
+		pSlow = NULL;
+
+		printf("\n倒数第 [%d] 个节点是：%d\n", k, pSlow->value);
+	}
+}
+
+void test_delete_ordered_k_node(List **list)
+{
+	int k = 10;
+
+	printf("\n删除第[%d]个结点之后：\n", k);
+	delete_ordered_k_node(list, k);
+	print_list(*list);
+
+	int size = get_list_size(*list);
+	printf("\nlist size: %d\n", size);
+
+}
+
+void test_find_mid_node(List *list)
+{
+	Node *mid = find_middle_node(list);
+	printf("\nmid: %d\n", mid->value);
+}
+
+void test_is_palindrome(List *list)
+{
+	printf("\nIs palindrome?\n");
 	bool flag = is_palindrome(list);
 	if (flag)
 	{
@@ -273,8 +460,37 @@ int main(int argc, char const *argv[])
 	{
 		printf("No\n");
 	}
+}
 
-	// 3. destroy list
+int main(int argc, char const *argv[])
+{
+	// 1. create list
+	List *pHead = NULL;
+	List *list = createList();
+
+	insertNodeToListTail(list, createNode(2));
+	insertNodeToListTail(list, createNode(3));
+	insertNodeToListTail(list, createNode(4));
+	insertNodeToListTail(list, createNode(5));
+	insertNodeToListTail(list, createNode(5));
+	insertNodeToListTail(list, createNode(4));
+	insertNodeToListTail(list, createNode(3));
+	insertNodeToListTail(list, createNode(2));
+	insertNodeToListTail(list, createNode(1));
+
+	printf("src list: \n");
+	print_list(list);
+
+	// test 1: find middle mode in link
+	test_find_mid_node(list);
+
+	// test 2: is palinfrome
+	test_is_palindrome(list);
+
+	// test 3: delte reciprocal K node
+	test_delete_ordered_k_node(&list);
+
+	// 2. destroy list
 	destroy_list(list);
 	return 0;
 }

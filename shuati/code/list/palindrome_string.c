@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-02 13:17:23
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-03 00:27:48
+* @Last Modified time: 2020-08-04 00:44:45
 */
 
 /**
@@ -100,6 +100,16 @@ List *createList()
 	List * list = (List*)malloc(sizeof(List));
 
 	list->value = 1;
+	list->next = NULL;
+
+	return list;
+}
+
+List *createList2(int value)
+{
+	List * list = (List*)malloc(sizeof(List));
+
+	list->value = value;
 	list->next = NULL;
 
 	return list;
@@ -287,6 +297,81 @@ void destroy_list(List *list)
 	}
 }
 
+
+/**
+ * 合并两个有序的列表
+ * 思路：
+ * 
+ */
+
+List *merge_tow_ordered_link(List *list1, List *list2)
+{
+	List *l1 = list1;
+	List *l2 = list2;
+
+	Node *pPre = createNode(-1);
+	Node *pHead = pPre;
+
+	if (l1 == NULL)
+	{
+		return l2;
+	}
+	if (l2 == NULL)
+	{
+		return l1;
+	}
+
+	while(l1 && l2) 
+	{
+		if (l1->value < l2->value)
+		{
+			pHead->next = l1;
+			l1 = l1->next;
+		}
+		else
+		{
+			pHead->next = l2;
+			l2 = l2->next;
+		}
+		pHead = pHead->next;
+	}
+
+	// 如果两个链表长度不相等，一个链表编译结束之后，将另一个链表剩余部分缀在合并好的链表末尾
+	pHead->next = (l1 == NULL ? l2 : l1);
+
+	return pPre->next;
+
+}
+
+void test_merge_tow_ordered_link()
+{
+	printf("---------------------------------------\n");
+
+	List *list1 = createList2(1);
+	insertNodeToListTail(list1, createNode(2));
+	insertNodeToListTail(list1, createNode(3));
+	insertNodeToListTail(list1, createNode(4));
+	printf("src list1: \n");
+	print_list(list1);
+
+	List *list2 = createList2(5);
+	insertNodeToListTail(list2, createNode(6));
+	insertNodeToListTail(list2, createNode(7));
+	insertNodeToListTail(list2, createNode(8));
+	insertNodeToListTail(list2, createNode(9));
+	insertNodeToListTail(list2, createNode(10));
+	printf("src list2: \n");
+	print_list(list2);
+
+	printf("\nmerge two ordered link: \n");
+	List *new_list = merge_tow_ordered_link(list1, list2);
+	print_list(new_list);
+
+	destroy_list(list1);
+	destroy_list(list2);
+}
+
+
 /**
  * 删除链表中倒数第 K 个点
  * 思路：
@@ -441,7 +526,6 @@ void test_is_palindrome(List *list)
 int main(int argc, char const *argv[])
 {
 	// 1. create list
-	List *pHead = NULL;
 	List *list = createList();
 
 	insertNodeToListTail(list, createNode(2));
@@ -454,20 +538,32 @@ int main(int argc, char const *argv[])
 	insertNodeToListTail(list, createNode(2));
 	insertNodeToListTail(list, createNode(1));
 
+	printf("---------------------------------------\n");
 	printf("src list: \n");
 	print_list(list);
 
 	// test 1: find middle mode in link
+	printf("---------------------------------------\n");
 	test_find_mid_node(list);
 
+
 	// test 2: is palinfrome
+	printf("---------------------------------------\n");
 	test_is_palindrome(list);
 
+	
 	// test 3: delte reciprocal K node
+	printf("---------------------------------------\n");
 	test_delete_ordered_k_node(&list);
-
+	
+	/*
 	// test 4: detect rings
+	printf("---------------------------------------\n");
 	test_detect_ring_in_link(list);
+	*/
+
+	// test 5: merge two ordered link
+	test_merge_tow_ordered_link();
 
 	// 2. destroy list
 	destroy_list(list);

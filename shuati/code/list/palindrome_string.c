@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-02 13:17:23
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-04 00:44:45
+* @Last Modified time: 2020-08-06 23:25:52
 */
 
 /**
@@ -133,32 +133,6 @@ void print_list(List *pList)
 	printf("\n");
 }
 
-/**
- * 查找链表的中间节点.
- * 思路：
- * 1. 快指针每次前进两个节点，慢节点每次前进一个节点
- * 2. 如果快指针走到了末尾，或者快指针的下一个节点走到了末尾，停止
- * 3. 此时，慢指针指向的位置就是中间节点
- *
- * 说明：这里链表节点数有奇数和偶数之分，奇数不用考虑了。如果是偶数，则取上中位置
- * 例如：1 2 3 4 5 6
- * 中间节点为3
- */
-Node *find_middle_node(List *list)
-{
-	Node *pFast = NULL, *pSlow = NULL;
-
-	pFast = pSlow = list;
-
-	while(pFast->next && pFast->next->next) 
-	{
-		pFast = pFast->next->next;
-		pSlow = pSlow->next;
-	}
-
-	return pSlow;
-}
-
 List *local_reverse(List * head) 
 {
     List * beg = NULL;
@@ -244,8 +218,40 @@ List * reverse_list_3(List *list)
 	}
 }
 
+
 /**
- * 判断链表是否是回文
+ * *************************
+ * 1 查找链表的中间节点.
+ * *************************
+ * 
+ * 思路：
+ * 1. 快指针每次前进两个节点，慢节点每次前进一个节点
+ * 2. 如果快指针走到了末尾，或者快指针的下一个节点走到了末尾，停止
+ * 3. 此时，慢指针指向的位置就是中间节点
+ *
+ * 说明：这里链表节点数有奇数和偶数之分，奇数不用考虑了。如果是偶数，则取上中位置
+ * 例如：1 2 3 4 5 6
+ * 中间节点为3
+ */
+Node *find_middle_node(List *list)
+{
+	Node *pFast = NULL, *pSlow = NULL;
+
+	pFast = pSlow = list;
+
+	while(pFast->next && pFast->next->next) 
+	{
+		pFast = pFast->next->next;
+		pSlow = pSlow->next;
+	}
+
+	return pSlow;
+}
+
+/**
+ * **********************
+ * 2. 判断链表是否是回文
+ * **********************
  * 思路：
  * 1. 找到链表的中间节点
  * 2. 反转后半部分链表
@@ -281,99 +287,11 @@ bool is_palindrome(List *list)
 	return true;
 }
 
-void destroy_list(List *list)
-{
-	if (list)
-	{
-		Node *p = NULL, *q = NULL;
-
-		p = list;
-		while(p) 
-		{
-			q = p->next;
-			free(p);
-			p = q;
-		}
-	}
-}
-
 
 /**
- * 合并两个有序的列表
- * 思路：
- * 
- */
-
-List *merge_tow_ordered_link(List *list1, List *list2)
-{
-	List *l1 = list1;
-	List *l2 = list2;
-
-	Node *pPre = createNode(-1);
-	Node *pHead = pPre;
-
-	if (l1 == NULL)
-	{
-		return l2;
-	}
-	if (l2 == NULL)
-	{
-		return l1;
-	}
-
-	while(l1 && l2) 
-	{
-		if (l1->value < l2->value)
-		{
-			pHead->next = l1;
-			l1 = l1->next;
-		}
-		else
-		{
-			pHead->next = l2;
-			l2 = l2->next;
-		}
-		pHead = pHead->next;
-	}
-
-	// 如果两个链表长度不相等，一个链表编译结束之后，将另一个链表剩余部分缀在合并好的链表末尾
-	pHead->next = (l1 == NULL ? l2 : l1);
-
-	return pPre->next;
-
-}
-
-void test_merge_tow_ordered_link()
-{
-	printf("---------------------------------------\n");
-
-	List *list1 = createList2(1);
-	insertNodeToListTail(list1, createNode(2));
-	insertNodeToListTail(list1, createNode(3));
-	insertNodeToListTail(list1, createNode(4));
-	printf("src list1: \n");
-	print_list(list1);
-
-	List *list2 = createList2(5);
-	insertNodeToListTail(list2, createNode(6));
-	insertNodeToListTail(list2, createNode(7));
-	insertNodeToListTail(list2, createNode(8));
-	insertNodeToListTail(list2, createNode(9));
-	insertNodeToListTail(list2, createNode(10));
-	printf("src list2: \n");
-	print_list(list2);
-
-	printf("\nmerge two ordered link: \n");
-	List *new_list = merge_tow_ordered_link(list1, list2);
-	print_list(new_list);
-
-	destroy_list(list1);
-	destroy_list(list2);
-}
-
-
-/**
- * 删除链表中倒数第 K 个点
+ * ******************************
+ * 3. 删除链表中倒数第 K 个点
+ * ******************************
  * 思路：
  * 1. 对于没有头节点的链表来说，如果仅存在一个节点，如果 k == 1,则删除头节点，否则推出
  * 2. 快慢指针，快指针先前进 k-1 步骤，然后慢指针和快指针同时前进，等到快指针到达结尾的时候，慢指针指向的节点就是倒数第k个
@@ -445,8 +363,11 @@ void delete_ordered_k_node(List **list, int k)
 	}
 }
 
+
 /**
- * 检测链表有没有环
+ * **********************
+ * 4 检测链表有没有环
+ * **********************
  * 思路：
  * 1. 创建快慢指针，快指针每次前进两个节点，慢指针前进一个节点，如果两根指针存在相等，则有环
  * 2. 如果快指针首先指向空，则没有环
@@ -472,34 +393,67 @@ bool detect_ring_in_link(List *list)
 	return false;
 }
 
-void test_detect_ring_in_link(List *list)
+void destroy_list(List *list)
 {
-	// set ring
-	Node *head = list;
-	Node *p = list;
-
-	while(p->next) 
+	if (list)
 	{
-		p = p->next;
-	}
-	p->next = head;
-	list = p;
+		Node *p = NULL, *q = NULL;
 
-	printf("\n检测链表中是否存在环：\n");
-	bool flag = detect_ring_in_link(list);
-	printf("\n%s\n", flag==true?"Yes":"No");
+		p = list;
+		while(p) 
+		{
+			q = p->next;
+			free(p);
+			p = q;
+		}
+	}
 }
 
-void test_delete_ordered_k_node(List **list)
+
+/**
+ * ****************************
+ * 5. 合并两个有序的列表
+ * ****************************
+ * 思路：
+ * 
+ */
+
+List *merge_tow_ordered_link(List *list1, List *list2)
 {
-	int k = 10;
+	List *l1 = list1;
+	List *l2 = list2;
 
-	printf("\n删除第[%d]个结点之后：\n", k);
-	delete_ordered_k_node(list, k);
-	print_list(*list);
+	Node *pPre = createNode(-1);
+	Node *pHead = pPre;
 
-	int size = get_list_size(*list);
-	printf("\nlist size: %d\n", size);
+	if (l1 == NULL)
+	{
+		return l2;
+	}
+	if (l2 == NULL)
+	{
+		return l1;
+	}
+
+	while(l1 && l2) 
+	{
+		if (l1->value < l2->value)
+		{
+			pHead->next = l1;
+			l1 = l1->next;
+		}
+		else
+		{
+			pHead->next = l2;
+			l2 = l2->next;
+		}
+		pHead = pHead->next;
+	}
+
+	// 如果两个链表长度不相等，一个链表编译结束之后，将另一个链表剩余部分缀在合并好的链表末尾
+	pHead->next = (l1 == NULL ? l2 : l1);
+
+	return pPre->next;
 
 }
 
@@ -521,6 +475,66 @@ void test_is_palindrome(List *list)
 	{
 		printf("No\n");
 	}
+}
+
+void test_delete_ordered_k_node(List **list)
+{
+	int k = 10;
+
+	printf("\n删除第[%d]个结点之后：\n", k);
+	delete_ordered_k_node(list, k);
+	print_list(*list);
+
+	int size = get_list_size(*list);
+	printf("\nlist size: %d\n", size);
+}
+
+
+void test_detect_ring_in_link(List *list)
+{
+	// set ring
+	Node *head = list;
+	Node *p = list;
+
+	while(p->next) 
+	{
+		p = p->next;
+	}
+	p->next = head;
+	list = p;
+
+	printf("\n检测链表中是否存在环：\n");
+	bool flag = detect_ring_in_link(list);
+	printf("\n%s\n", flag==true?"Yes":"No");
+}
+
+
+void test_merge_tow_ordered_link()
+{
+	printf("---------------------------------------\n");
+
+	List *list1 = createList2(1);
+	insertNodeToListTail(list1, createNode(2));
+	insertNodeToListTail(list1, createNode(3));
+	insertNodeToListTail(list1, createNode(4));
+	printf("src list1: \n");
+	print_list(list1);
+
+	List *list2 = createList2(5);
+	insertNodeToListTail(list2, createNode(6));
+	insertNodeToListTail(list2, createNode(7));
+	insertNodeToListTail(list2, createNode(8));
+	insertNodeToListTail(list2, createNode(9));
+	insertNodeToListTail(list2, createNode(10));
+	printf("src list2: \n");
+	print_list(list2);
+
+	printf("\nmerge two ordered link: \n");
+	List *new_list = merge_tow_ordered_link(list1, list2);
+	print_list(new_list);
+
+	destroy_list(list1);
+	destroy_list(list2);
 }
 
 int main(int argc, char const *argv[])

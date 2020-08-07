@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-02 13:17:23
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-06 23:25:52
+* @Last Modified time: 2020-08-07 19:06:34
 */
 
 /**
@@ -496,6 +496,8 @@ void test_detect_ring_in_link(List *list)
 	Node *head = list;
 	Node *p = list;
 
+	int size = get_list_size(list);
+
 	while(p->next) 
 	{
 		p = p->next;
@@ -506,6 +508,22 @@ void test_detect_ring_in_link(List *list)
 	printf("\n检测链表中是否存在环：\n");
 	bool flag = detect_ring_in_link(list);
 	printf("\n%s\n", flag==true?"Yes":"No");
+
+	// 删除链表的环
+	p = list;
+	int count = 0;
+	while(p) 
+	{
+		count++;
+		p = p->next;
+
+		if (count == size)
+		{
+			break;
+		}
+	}
+	p->next = NULL;
+	list = p;
 }
 
 
@@ -570,11 +588,11 @@ int main(int argc, char const *argv[])
 	printf("---------------------------------------\n");
 	test_delete_ordered_k_node(&list);
 	
-	/*
+	
 	// test 4: detect rings
 	printf("---------------------------------------\n");
 	test_detect_ring_in_link(list);
-	*/
+	
 
 	// test 5: merge two ordered link
 	test_merge_tow_ordered_link();

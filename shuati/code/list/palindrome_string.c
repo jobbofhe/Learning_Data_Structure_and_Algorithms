@@ -2,19 +2,8 @@
 * @Author: shuqiang
 * @Date:   2020-08-02 13:17:23
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-07 19:06:34
+* @Last Modified time: 2020-08-07 19:13:40
 */
-
-/**
- * 题目要求：
- * 使用链表存储字符串，并且判断这个字符串是否是回文串
- *
- * 思路：
- * 1. 创建字符串的链表
- * 2. 快慢指针同时遍历链表，快指针每次前进两步，满指针每次前进一步，找到链表中点
- * 3. 反转后半部分链表
- * 4. 重新遍历链表，比较是否相等
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -172,6 +161,9 @@ List * reverse_list(List *list)
 	return pCur;
 }
 
+/**
+ * 迭代实现链表逆转
+ */
 List * reverse_list_2(List *list)
 {
 	Node *pPre = list;
@@ -454,7 +446,6 @@ List *merge_tow_ordered_link(List *list1, List *list2)
 	pHead->next = (l1 == NULL ? l2 : l1);
 
 	return pPre->next;
-
 }
 
 void test_find_mid_node(List *list)
@@ -488,7 +479,6 @@ void test_delete_ordered_k_node(List **list)
 	int size = get_list_size(*list);
 	printf("\nlist size: %d\n", size);
 }
-
 
 void test_detect_ring_in_link(List *list)
 {
@@ -525,7 +515,6 @@ void test_detect_ring_in_link(List *list)
 	p->next = NULL;
 	list = p;
 }
-
 
 void test_merge_tow_ordered_link()
 {

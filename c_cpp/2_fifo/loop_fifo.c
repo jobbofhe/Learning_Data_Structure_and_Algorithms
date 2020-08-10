@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-07 20:14:16
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-07 21:27:33
+* @Last Modified time: 2020-08-10 20:20:41
 */
 
 /**
@@ -85,8 +85,8 @@ bool deQueue(QueueElem *pQueue)
 	}
 	if (pQueue->front == pQueue->rear)
 	{
-		pQueue->front = 0;
-		pQueue->rear = 0;
+		pQueue->front = -1;
+		pQueue->rear = -1;
 
 		return true;
 	}
@@ -145,8 +145,11 @@ void show_queue(QueueElem *pQueue)
 		return;
 	}
 
+	printf("front: %d, rear: %d\n", pQueue->front,  pQueue->rear);
+
 	if (pQueue->front < pQueue->rear)
 	{
+
 		for (int i = pQueue->front; i < pQueue->rear; ++i)
 		{
 			printf("%d ", pQueue->data[i]);
@@ -194,6 +197,10 @@ int main(int argc, char const *argv[])
 	{
 		enQueue(&stQueue, i);
 	}
+
+	printf("size %d\n", get_queue_size(&stQueue));
+	show_queue(&stQueue);
+
 
 	for (int i = 0; i < 5; ++i)
 	{

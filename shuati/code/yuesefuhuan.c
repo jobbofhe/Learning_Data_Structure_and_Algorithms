@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-10 20:39:13
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-11 22:56:23
+* @Last Modified time: 2020-08-11 23:09:00
 */
 
 /**
@@ -32,7 +32,7 @@ int joseph(int m, int k)
 
 void test_joseph()
 {
-	int pos = joseph(30, 7);
+	int pos = joseph(8, 3);
 	printf("最终活下来的人是第[%d]个\n", pos);
 }
 
@@ -42,3 +42,4 @@ int main(int argc, char const *argv[])
 
 	return 0;
 }
+

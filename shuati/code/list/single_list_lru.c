@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-01 17:14:36
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-02 15:33:18
+* @Last Modified time: 2020-08-07 20:38:38
 */
 
 
@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 const int LIST_MAX_SIZE = 8;
 

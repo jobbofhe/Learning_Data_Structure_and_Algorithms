@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-11-18 19:10:24
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-16 22:47:14
+* @Last Modified time: 2020-08-17 00:17:38
 */
 
 /**
@@ -29,6 +29,7 @@ void insert_sort(int a[], int n)
 	for (i = 1; i < n; ++i)
 	{
 		printf("[%d]-------------------------------------------------------------------------\n", i);
+		// 找到插入位置
 		for (j = i-1; j >= 0; j--)
 		{
 			printf("比较： i:%d, j:%d a[%d]:%d a[%d]:%d\n", i, j, i, a[i], j, a[j]);
@@ -55,6 +56,32 @@ void insert_sort(int a[], int n)
 	}
 }
 
+
+void insert_sort_v2(int a[], int n)
+{
+	int i = 0, j = 0;
+
+	for (i = 1; i < n; ++i)
+	{
+		int value = a[i];
+		j = i-1;
+		// 将a[i], 插入有序数组a[j]中
+		for (; j >= 0; --j)
+		{
+			if (a[j] > value)
+			{
+				a[j+1] = a[j];
+			}
+			else
+			{
+				break;
+			}
+		}
+		a[j+1] = value;
+	}
+}
+
+
 void print(int a[], int size)
 {
 	for (int i = 0; i < size; ++i)
@@ -77,11 +104,26 @@ void test_insert_sort_1()
 	print(array, size);
 }
 
+void test_insert_sort_2()
+{
+	int array[] = {30, 40, 10, 5, 90, 50, 66, 99, 3};
+	int size = LEN(array);
+	printf("排序之前： ");
+	print(array, size);
+
+	insert_sort_v2(array, size);
+
+	printf("排序之后： ");
+	print(array, size);
+}
+
 int main(int argc, char const *argv[])
 {
 	printf("直接插入排序：\n");
 	
 	test_insert_sort_1();
+
+	test_insert_sort_2();
 
 	return 0;
 }

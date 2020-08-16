@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-11-18 19:10:24
 * @Last Modified by:   Administrator
-* @Last Modified time: 2019-11-18 19:46:47
+* @Last Modified time: 2020-08-16 22:47:14
 */
 
 /**
@@ -28,9 +28,11 @@ void insert_sort(int a[], int n)
 
 	for (i = 1; i < n; ++i)
 	{
+		printf("[%d]-------------------------------------------------------------------------\n", i);
 		for (j = i-1; j >= 0; j--)
 		{
-			// 
+			printf("比较： i:%d, j:%d a[%d]:%d a[%d]:%d\n", i, j, i, a[i], j, a[j]);
+			// 从小到大排序
 			if (a[j] < a[i])
 			{
 				break;
@@ -41,14 +43,15 @@ void insert_sort(int a[], int n)
 		if (j != i-1)
 		{
 			int tmp = a[i];
-
+			printf("j: %d, i-1: %d\n", j, i-1);
 			for (k = i-1; k > j; k--)
 			{
 				a[k+1] = a[k];
+				printf("\n交换： k:%d, a[%d]:%d", k, k+1, a[k+1]);
 			}
 			a[k+1] = tmp;
+			printf(", a[%d]: %d\n", k+1, a[k+1]);
 		}
-		/* code */
 	}
 }
 
@@ -61,10 +64,8 @@ void print(int a[], int size)
 	printf("\n");
 }
 
-int main(int argc, char const *argv[])
+void test_insert_sort_1()
 {
-	printf("直接插入排序：\n");
-	
 	int array[] = {30, 40, 10, 5, 90, 50, 66, 99, 3};
 	int size = LEN(array);
 	printf("排序之前： ");
@@ -74,6 +75,13 @@ int main(int argc, char const *argv[])
 
 	printf("排序之后： ");
 	print(array, size);
+}
+
+int main(int argc, char const *argv[])
+{
+	printf("直接插入排序：\n");
+	
+	test_insert_sort_1();
 
 	return 0;
 }

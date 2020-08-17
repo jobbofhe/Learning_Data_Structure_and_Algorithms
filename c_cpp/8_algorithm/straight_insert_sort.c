@@ -2,7 +2,7 @@
 * @Author: jobbofhe
 * @Date:   2019-11-18 19:10:24
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-17 00:17:38
+* @Last Modified time: 2020-08-17 09:19:40
 */
 
 /**
@@ -63,9 +63,10 @@ void insert_sort_v2(int a[], int n)
 
 	for (i = 1; i < n; ++i)
 	{
+		// 需要排序的数字
 		int value = a[i];
 		j = i-1;
-		// 将a[i], 插入有序数组a[j]中
+		// 查找插入位置，交换数据
 		for (; j >= 0; --j)
 		{
 			if (a[j] > value)
@@ -77,10 +78,10 @@ void insert_sort_v2(int a[], int n)
 				break;
 			}
 		}
+		// 将value 插入有序表
 		a[j+1] = value;
 	}
 }
-
 
 void print(int a[], int size)
 {

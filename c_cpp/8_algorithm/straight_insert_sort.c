@@ -1,9 +1,3 @@
-/*
-* @Author: jobbofhe
-* @Date:   2019-11-18 19:10:24
-* @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-17 09:19:40
-*/
 
 /**
  *
@@ -55,7 +49,6 @@ void insert_sort(int a[], int n)
 		}
 	}
 }
-
 
 void insert_sort_v2(int a[], int n)
 {
@@ -125,6 +118,6 @@ int main(int argc, char const *argv[])
 	test_insert_sort_1();
 
 	test_insert_sort_2();
-
+	
 	return 0;
 }

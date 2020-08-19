@@ -24,7 +24,8 @@ void merge(int a[], int start, int mid, int end)
 	int j = mid + 1;
 	int k = 0;
 
-	while(i < mid && j <= end) 
+	printf("------------- start:%d, mid:%d, end:%d\n", start, mid, end);
+	while(i <= mid && j <= end) 
 	{
 		if (a[i] <= a[j])
 		{
@@ -48,6 +49,7 @@ void merge(int a[], int start, int mid, int end)
 	for (i = 0; i < k; ++i)
 	{
 		a[start+i] = tmp[i];
+		printf("start+i: %d a[start+i]: %d\n", start+i, a[start+i]);
 	}
 
 	free(tmp);

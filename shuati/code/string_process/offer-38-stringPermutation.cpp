@@ -2,6 +2,12 @@
 #include <vector>
 #include <set>
 
+/**
+ * 字符串的全排列个数
+ * 举例："abc"
+ * 拍全列： abc acb bac bca cab cba
+ */
+
 void backtrack(std::string s, int start, std::set<std::string> &res)
 {
 	// 回溯结束条件

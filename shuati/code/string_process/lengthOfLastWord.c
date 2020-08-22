@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * 字符串的最后一个单词的长度，单词以空格隔开
+ */
 
 int lengthOfLastWord(char * s)
 {

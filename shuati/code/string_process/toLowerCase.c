@@ -2,7 +2,7 @@
 * @Author: shuqiang
 * @Date:   2020-08-20 20:17:21
 * @Last Modified by:   Administrator
-* @Last Modified time: 2020-08-20 21:06:56
+* @Last Modified time: 2020-08-22 23:28:53
 */
 
 #include <stdio.h>
@@ -18,6 +18,10 @@
  * Z : 90
  * a : 97
  * z : 122
+ */
+
+/**
+ * 将字符串中的大写字母转为小写，如果是小写则不修改
  */
 
 char * toLowerCase(char * str)

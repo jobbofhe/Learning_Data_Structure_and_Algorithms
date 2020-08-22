@@ -3,6 +3,9 @@
 #include <string.h>
 
 /**
+ * 将空格隔开的每个单词 反转
+ */
+/**
  * 原地反转
  */
 void revers(char*sub_str, int start, int end) {
